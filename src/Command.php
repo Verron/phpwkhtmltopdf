@@ -66,11 +66,7 @@ class Command extends BaseCommand
             $this->addArg((string) $args['input']);
             unset($args['input']);
         }
-        if (isset($args['inputArg'])) {
-            // Typecasts TmpFile to filename and escapes argument
-            $this->addArg((string) $args['inputArg'], null, true);
-            unset($args['inputArg']);
-        }
+
         foreach($args as $key=>$val) {
             if (is_numeric($key)) {
                 $this->addArg("--$val");
@@ -83,8 +79,15 @@ class Command extends BaseCommand
                     }
                 }
             } else {
-                $this->addArg("--$key", $val);
+                if ($key != 'inputArg') {
+                    $this->addArg("--$key", $val);
+                }
             }
+        }
+
+        if (isset($args['inputArg'])) {
+            // Typecasts TmpFile to filename and escapes argument
+            $this->addArg((string) $args['inputArg'], null, true);
         }
     }
 
@@ -97,6 +100,7 @@ class Command extends BaseCommand
         if ($this->enableXvfb) {
             return $this->xvfbRunBinary.' '.$this->xvfbRunOptions.' '.$command;
         }
+
         return $command;
     }
 }
